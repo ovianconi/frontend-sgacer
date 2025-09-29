@@ -192,6 +192,13 @@ export default function Roles() {
       {/* Paginación */}
       <div className="flex justify-between items-center mt-4">
         <div className="space-x-2">
+          {/*<button
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            ⏮️ Primera
+          </button>*/}
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
@@ -206,6 +213,13 @@ export default function Roles() {
           >
             Siguiente ➡️
           </button>
+          {/*<button
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Última ⏭️
+          </button>*/}
         </div>
         <span>
           Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}

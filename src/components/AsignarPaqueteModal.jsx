@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
+import { getUserRoles } from "../utils/auth";
 
 export default function AsignarPaqueteModal({ open, onClose, onSubmit, initialData }) {
     const [clientes, setClientes] = useState([]);
@@ -13,6 +14,8 @@ export default function AsignarPaqueteModal({ open, onClose, onSubmit, initialDa
         fechaCompra: "",
         fechaValidez: "",
     });
+    const roles = getUserRoles();
+    const isAdmin = roles.includes("ROLE_ADMIN");
 
     const token = getToken();
 
@@ -167,17 +170,20 @@ export default function AsignarPaqueteModal({ open, onClose, onSubmit, initialDa
                     onChange={handleChange}
                     className="border p-2 rounded w-full mb-4"
                 />
-
                 {/* Fecha validez */}
-                <label className="block mb-2 font-medium">Fecha de validez</label>
-                <input
-                    type="date"
-                    name="fechaValidez"
-                    value={formData.fechaValidez}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full mb-4"
-                    min={new Date().toISOString().split("T")[0]}
-                />
+                {isAdmin && (
+                    <div>
+                        <label className="block mb-2 font-medium">Fecha de validez</label>
+                        <input
+                            type="date"
+                            name="fechaValidez"
+                            value={formData.fechaValidez}
+                            onChange={handleChange}
+                            className="border p-2 rounded w-full mb-4"
+                            min={new Date().toISOString().split("T")[0]}
+                        />
+                    </div>
+                )}
 
                 {/* Botones */}
                 <div className="col-span-2 flex justify-end space-x-3 mt-4">

@@ -1,25 +1,37 @@
-// src/layouts/MainLayout.jsx
+{/* MainLayout */ }
+
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { removeToken, getToken } from "../utils/auth";
 import { useEffect, useState } from "react";
-import MenuIcon from '@mui/icons-material/Menu';
-import SettingsIcon from '@mui/icons-material/Settings';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import PeopleIcon from '@mui/icons-material/People';
-import ConstructionIcon from '@mui/icons-material/Construction';
-import PersonIcon from '@mui/icons-material/Person';
-import VaccinesIcon from '@mui/icons-material/Vaccines';
+import * as MuiIcons from "@mui/icons-material"; // ✅ Importa todos los íconos dinámicamente
+import MenuIcon from "@mui/icons-material/Menu";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 export default function MainLayout() {
   const navigate = useNavigate();
   const token = getToken();
-  const [collapsed, setCollapsed] = useState(true); // Nuevo estado
+  const [collapsed, setCollapsed] = useState(true);
+  const [vistas, setVistas] = useState([]);
 
   useEffect(() => {
     if (!token)
     {
       navigate("/login");
+    } else
+    {
+      fetch("http://localhost:8080/api/vistas/disponibles", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("No se pudieron cargar las vistas");
+          return res.json();
+        })
+        .then((data) => setVistas(data))
+        .catch((err) => {
+          console.error("Error cargando vistas disponibles:", err);
+          setVistas([]);
+        });
     }
   }, [token, navigate]);
 
@@ -36,88 +48,58 @@ export default function MainLayout() {
     <div className="flex h-screen w-screen bg-gray-100">
       {/* Sidebar */}
       <aside
-        className={`transition-all duration-300 bg-white shadow-md ${collapsed ? 'w-16' : 'w-64'
+        className={`transition-all duration-300 bg-white shadow-md flex flex-col ${collapsed ? "w-16" : "w-64"
           }`}
       >
-        {/* Botón para minimizar/maximizar */}
-        <div className="flex justify-start p-2 rounded hover:bg-gray-200" >
-          <button onClick={toggleSidebar} className="text-blue-500 hover:text-blue-700">
-            <MenuIcon />
-          </button>
-        </div>
+        {/* Botón toggle */}
+        <a
+          onClick={toggleSidebar}
+          className="flex items-center px-4 py-2 rounded hover:bg-gray-200 cursor-pointer hover:text-blue-500 text-gray-800"
+        >
+          {collapsed ? <MenuIcon color="primary" /> : <MenuOpenIcon color="primary" />}
+        </a>
 
-
-        <nav className="space-y-2">
-          <Link
-            to="/dashboard"
-            className="flex items-center px-4 py-2 rounded hover:bg-gray-200"
-          >
-            <DashboardIcon color="primary" />
-            {!collapsed && <span className="ml-2">Dashboard</span>}
-          </Link>
-          <Link
-            to="/clientes"
-            className="flex items-center px-4 py-2 rounded hover:bg-gray-200"
-          >
-            <PeopleIcon color="primary" />
-            {!collapsed && <span className="ml-2">Clientes</span>}
-          </Link>
-          <Link
-            to="/equipos"
-            className="flex items-center px-4 py-2 rounded hover:bg-gray-200"
-          >
-            <ConstructionIcon color="primary" />
-            {!collapsed && <span className="ml-2">Equipos</span>}
-          </Link>
-          <Link
-            to="/tratamientos"
-            className="flex items-center px-4 py-2 rounded hover:bg-gray-200"
-          >
-            <VaccinesIcon color="primary" />
-            {!collapsed && <span className="ml-2">Tratamientos</span>}
-          </Link>
-          <Link
-            to="/personales"
-            className="flex items-center px-4 py-2 rounded hover:bg-gray-200"
-          >
-            <PersonIcon color="primary" />
-            {!collapsed && <span className="ml-2">Personales</span>}
-          </Link>
-          <Link
-            to="/paquetes"
-            className="flex items-center px-4 py-2 rounded hover:bg-gray-200"
-          >
-            <InventoryIcon color="primary" />
-            {!collapsed && <span className="ml-2">Paquetes</span>}
-          </Link>
-          <Link
-            to="/configuracion"
-            className="flex items-center px-4 py-2 rounded hover:bg-gray-200"
-          >
-            <SettingsIcon color="primary" />
-            {!collapsed && <span className="ml-2">Configuración</span>}
-          </Link>
+        {/* Menú dinámico */}
+        <nav className="flex-1 overflow-y-auto space-y-2">
+          {vistas.length > 0 ? (
+            vistas.map((vista) => {
+              const IconComponent =
+                MuiIcons[vista.icono] || MuiIcons["Menu"]; // ✅ Fallback si no existe
+              return (
+                <Link
+                  key={vista.id}
+                  to={vista.path}
+                  className="flex items-center px-4 py-2 rounded hover:bg-gray-200"
+                >
+                  <IconComponent color="primary" />
+                  {!collapsed && <span className="ml-2">{vista.nombre}</span>}
+                </Link>
+              );
+            })
+          ) : (
+            <p className="text-gray-500 text-center p-4 text-sm">
+              No tienes permisos para ver secciones
+            </p>
+          )}
         </nav>
+
+        {/* Cerrar sesión */}
+        <a
+          onClick={handleLogout}
+          className="flex items-center px-4 py-2 rounded hover:bg-gray-200 cursor-pointer hover:text-blue-500 text-gray-800"
+        >
+          <LogoutIcon color="primary" />
+          {!collapsed && <span className="ml-2">Cerrar sesión</span>}
+        </a>
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="flex items-center justify-between bg-white p-4 shadow">
-          <h1 className="text-2xl font-bold">Sistema de Agendamiento</h1>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-          >
-            Cerrar sesión
-          </button>
-        </header>
-
-        {/* Contenido dinámico */}
-        <main className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 flex flex-col min-w-0">
+        <main className="flex-1 p-6 min-w-0">
           <Outlet />
         </main>
       </div>
-    </div>
+    </div >
   );
 }
+

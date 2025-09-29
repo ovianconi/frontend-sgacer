@@ -4,7 +4,7 @@ import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
 
 export default function TratamientoFormModal({ open, onClose, onSubmit, initialData }) {
-    const [form, setForm] = useState({ nombre: "", descripcion: "" });
+    const [form, setForm] = useState({ nombre: "", descripcion: "", requiereEquipo: false });
     const token = getToken();
 
     useEffect(() => {
@@ -13,10 +13,11 @@ export default function TratamientoFormModal({ open, onClose, onSubmit, initialD
             setForm({
                 nombre: initialData.nombre || "",
                 descripcion: initialData.descripcion || "",
+                requiereEquipo: initialData.requiereEquipo || false,
             });
         } else
         {
-            setForm({ nombre: "", descripcion: "" });
+            setForm({ nombre: "", descripcion: "", requiereEquipo: false });
         }
     }, [initialData]);
 
@@ -53,7 +54,7 @@ export default function TratamientoFormModal({ open, onClose, onSubmit, initialD
     };
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
                 <h2 className="text-xl font-semibold mb-4">
                     {initialData ? "Editar Tratamiento" : "Nuevo Tratamiento"}
@@ -77,8 +78,23 @@ export default function TratamientoFormModal({ open, onClose, onSubmit, initialD
                             value={form.descripcion}
                             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
                             className="border rounded p-2 w-full"
-                            rows={3}
                         />
+                    </div>
+
+                    {/* 🔥 Switch para requiereEquipo */}
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">¿Requiere equipo?</span>
+                        <button
+                            type="button"
+                            onClick={() => setForm({ ...form, requiereEquipo: !form.requiereEquipo })}
+                            className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors ${form.requiereEquipo ? "bg-green-500" : "bg-gray-300"
+                                }`}
+                        >
+                            <span
+                                className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${form.requiereEquipo ? "translate-x-6" : "translate-x-0"
+                                    }`}
+                            />
+                        </button>
                     </div>
 
                     <div className="flex justify-end space-x-2">

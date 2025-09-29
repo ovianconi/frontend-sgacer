@@ -11,7 +11,8 @@ export default function Login() {
     e.preventDefault();
     setError("");
 
-    try {
+    try
+    {
       const response = await fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
         headers: {
@@ -20,14 +21,16 @@ export default function Login() {
         body: JSON.stringify({ username, password }),
       });
 
-      if (!response.ok) {
+      if (!response.ok)
+      {
         throw new Error("Credenciales inválidas");
       }
 
       const data = await response.json();
       localStorage.setItem("token", data.token);
-      navigate("/dashboard");
-    } catch (err) {
+      navigate("/sesiones");
+    } catch (err)
+    {
       setError(err.message);
     }
   };

@@ -45,7 +45,7 @@ export default function Dashboard() {
   }, [token]);
 
 
-  const [tab, setTab] = useState("stats");
+  const [tab, setTab] = useState("calendar");
 
   // 📊 Datos en duro para los gráficos
   const dataSesiones = [
@@ -86,20 +86,11 @@ export default function Dashboard() {
 
 
   return (
-    <div className="p-6">
+    <div className="p-2">
       <PageTitle>Dashboard</PageTitle>
 
       {/* Tabs */}
       <div className="flex border-b mb-6">
-        <button
-          onClick={() => setTab("stats")}
-          className={`px-4 py-2 -mb-px font-semibold ${tab === "stats"
-            ? "border-b-2 border-blue-600 text-blue-600"
-            : "text-gray-500"
-            }`}
-        >
-          📊 Estadísticas
-        </button>
         <button
           onClick={() => setTab("calendar")}
           className={`px-4 py-2 -mb-px font-semibold ${tab === "calendar"
@@ -109,9 +100,45 @@ export default function Dashboard() {
         >
           📅 Calendario
         </button>
+        <button
+          onClick={() => setTab("stats")}
+          className={`px-4 py-2 -mb-px font-semibold ${tab === "stats"
+            ? "border-b-2 border-blue-600 text-blue-600"
+            : "text-gray-500"
+            }`}
+        >
+          📊 Estadísticas
+        </button>
       </div>
 
       {/* Contenido de pestañas */}
+      {tab === "calendar" && (
+        <div className="bg-white p-6 rounded shadow">
+          <h3 className="text-lg font-semibold mb-4">Calendario de sesiones</h3>
+
+          <Calendar
+            localizer={localizer}
+            events={eventos}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: 500 }}
+            date={fechaCalendario}
+            onNavigate={(nuevaFecha) => setFechaCalendario(nuevaFecha)}
+            view={vistaCalendario} // 👈 vista controlada
+            onView={(nuevaVista) => setVistaCalendario(nuevaVista)} // para que los botones del calendario también funcionen
+            onSelectEvent={manejarClickEvento}
+            onSelectSlot={manejarClickEnDia}
+            messages={{
+              next: "Sig.",
+              previous: "Ant.",
+              today: "Hoy",
+              month: "Mes",
+              week: "Semana",
+              day: "Día",
+            }}
+          />
+        </div>
+      )}
       {tab === "stats" && (
         <div>
           {/* Widgets */}
@@ -144,35 +171,6 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
         </div>
-      )}
-
-      {tab === "calendar" && (
-        <div className="bg-white p-6 rounded shadow">
-          <h3 className="text-lg font-semibold mb-4">Calendario de sesiones</h3>
-
-          <Calendar
-            localizer={localizer}
-            events={eventos}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: 500 }}
-            date={fechaCalendario}
-            onNavigate={(nuevaFecha) => setFechaCalendario(nuevaFecha)}
-            view={vistaCalendario} // 👈 vista controlada
-            onView={(nuevaVista) => setVistaCalendario(nuevaVista)} // para que los botones del calendario también funcionen
-            onSelectEvent={manejarClickEvento}
-            onSelectSlot={manejarClickEnDia}
-            messages={{
-              next: "Sig.",
-              previous: "Ant.",
-              today: "Hoy",
-              month: "Mes",
-              week: "Semana",
-              day: "Día",
-            }}
-          />
-        </div>
-
       )}
       {eventoSeleccionado && (
         <div
