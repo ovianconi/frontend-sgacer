@@ -6,9 +6,9 @@ import { toast } from "react-hot-toast";
 export default function PaqueteFormModal({ open, onClose, onSaved, initialData }) {
     const token = getToken();
     const [nombre, setNombre] = useState("");
+    const [duracion, setDuracion] = useState(0);
     const [tratamientos, setTratamientos] = useState([]);
     const [seleccion, setSeleccion] = useState([]);
-    // seleccion: [{ value, label, sesiones }]
 
     const api = (url, options = {}) =>
         fetch(url, {
@@ -23,7 +23,6 @@ export default function PaqueteFormModal({ open, onClose, onSaved, initialData }
     useEffect(() => {
         if (!open) return;
 
-        // cargar tratamientos
         api("http://localhost:8080/api/tratamientos")
             .then((r) => r.json())
             .then((list) => setTratamientos(list || []))
@@ -32,6 +31,7 @@ export default function PaqueteFormModal({ open, onClose, onSaved, initialData }
         if (initialData)
         {
             setNombre(initialData.nombre || "");
+            setDuracion(initialData.duracion || 0);
             const sel = (initialData.items || []).map((it) => ({
                 value: it.tratamientoId,
                 label: `${it.tratamientoNombre}`,
@@ -41,24 +41,23 @@ export default function PaqueteFormModal({ open, onClose, onSaved, initialData }
         } else
         {
             setNombre("");
+            setDuracion(0);
             setSeleccion([]);
         }
     }, [open, initialData]);
 
     const options = useMemo(
-        () =>
-            tratamientos.map((t) => ({
-                value: t.id,
-                label: `${t.nombre}`,
-                searchable: `${t.nombre} ${t.id}`, // texto adicional para búsqueda
-            })),
+        () => tratamientos.map((t) => ({
+            value: t.id,
+            label: `${t.nombre}`,
+            searchable: `${t.nombre} ${t.id}`,
+        })),
         [tratamientos]
     );
 
     if (!open) return null;
 
     const onChangeSelect = (vals) => {
-        // preservar sesiones ya introducidas si existían
         const mapPrev = new Map(seleccion.map((s) => [s.value, s.sesiones]));
         const next = (vals || []).map((v) => ({
             value: v.value,
@@ -81,6 +80,11 @@ export default function PaqueteFormModal({ open, onClose, onSaved, initialData }
             toast.error("El nombre es obligatorio");
             return;
         }
+        if (duracion <= 0)
+        {
+            toast.error("La duración debe ser mayor a 0 meses");
+            return;
+        }
         if (seleccion.length === 0)
         {
             toast.error("Seleccione al menos un tratamiento");
@@ -91,7 +95,7 @@ export default function PaqueteFormModal({ open, onClose, onSaved, initialData }
             sesiones: Number(s.sesiones) || 1,
         }));
 
-        const body = JSON.stringify({ nombre, items });
+        const body = JSON.stringify({ nombre, duracion, items });
 
         try
         {
@@ -135,6 +139,18 @@ export default function PaqueteFormModal({ open, onClose, onSaved, initialData }
                     </div>
 
                     <div>
+                        <label className="block text-sm font-medium mb-1">Duración (meses)</label>
+                        <input
+                            type="number"
+                            min={1}
+                            className="border p-2 rounded w-full"
+                            value={duracion}
+                            onChange={(e) => setDuracion(Number(e.target.value))}
+                            required
+                        />
+                    </div>
+
+                    <div>
                         <label className="block text-sm font-medium mb-1">
                             Tratamientos (selección múltiple)
                         </label>
@@ -148,11 +164,9 @@ export default function PaqueteFormModal({ open, onClose, onSaved, initialData }
                             isSearchable
                             noOptionsMessage={() => "No se encontraron tratamientos"}
                             styles={{
-                                menu: (base) => ({ ...base, zIndex: 9999 }), // asegura que el dropdown no quede tapado
+                                menu: (base) => ({ ...base, zIndex: 9999 }),
                             }}
-
                         />
-
                     </div>
 
                     {seleccion.length > 0 && (

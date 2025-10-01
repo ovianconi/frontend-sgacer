@@ -14,8 +14,6 @@ import Roles from "./pages/Roles";
 import Personales from "./pages/Personales";
 import Asignaciones from "./pages/Asignaciones";
 import Sesiones from "./pages/Sesiones";
-import Vistas from "./pages/Vistas";
-import RolVistas from "./pages/RolVistas";
 
 export default function App() {
   useEffect(() => {
@@ -53,8 +51,6 @@ export default function App() {
           <Route path="/configuracion" element={<Configuracion />} />
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/roles" element={<Roles />} />
-          <Route path="/vistas" element={<Vistas />} />
-          <Route path="/rol-vista" element={<RolVistas />} />
         </Route>
       </Routes>
     </Router>

@@ -55,6 +55,7 @@ export default function Paquetes() {
                         .map((it) => `${it.tratamientoNombre} (${it.sesiones})`)
                         .join(", "),
             }),
+            columnHelper.accessor("duracion", { header: "Duración" }),
             columnHelper.display({
                 id: "acciones",
                 header: "Acciones",

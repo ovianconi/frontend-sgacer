@@ -108,6 +108,39 @@ export default function Sesiones() {
     }
   };
 
+  const handleMarcarUsada = async () => {
+    if (!selectedSesion) return;
+    try
+    {
+      const res = await fetch(
+        `http://localhost:8080/api/sesiones/${selectedSesion.id}/usar`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok)
+      {
+        let message = "No se pudo marcar como usada";
+        try
+        {
+          const errorData = await res.json();
+          if (errorData?.message) message = errorData.message;
+        } catch (_) { }
+        throw new Error(message);
+      }
+
+      toast.success("Sesión marcada como usada correctamente");
+      setModalOpen(false);
+      await loadSesiones(); // 🔄 Refrescar calendario
+    } catch (err)
+    {
+      console.error("Error al marcar como usada:", err);
+      toast.error(err.message || "Error de red");
+    }
+  };
+
   const eventPropGetter = (event) => {
     const estado = event.resource?.estado;
     let backgroundColor = "#9ca3af";
@@ -191,12 +224,22 @@ export default function Sesiones() {
             </p>
 
             <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => setConfirmModalOpen(true)}
-                className="bg-red-600 text-white px-3 py-1 rounded"
-              >
-                Cancelar sesión
-              </button>
+              {selectedSesion.estado === "PENDIENTE" && (
+                <>
+                  <button
+                    onClick={handleMarcarUsada}
+                    className="bg-green-600 text-white px-3 py-1 rounded"
+                  >
+                    Marcar como usada
+                  </button>
+                  <button
+                    onClick={() => setConfirmModalOpen(true)}
+                    className="bg-red-600 text-white px-3 py-1 rounded"
+                  >
+                    Cancelar sesión
+                  </button>
+                </>
+              )}
               <button
                 onClick={() => setModalOpen(false)}
                 className="bg-gray-300 px-3 py-1 rounded"

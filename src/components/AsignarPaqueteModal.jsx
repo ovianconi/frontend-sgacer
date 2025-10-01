@@ -171,7 +171,7 @@ export default function AsignarPaqueteModal({ open, onClose, onSubmit, initialDa
                     className="border p-2 rounded w-full mb-4"
                 />
                 {/* Fecha validez */}
-                {isAdmin && (
+                {isAdmin && initialData && (
                     <div>
                         <label className="block mb-2 font-medium">Fecha de validez</label>
                         <input
