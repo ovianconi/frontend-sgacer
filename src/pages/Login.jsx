@@ -1,11 +1,31 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [toast, setToast] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 🔹 Detectar si venimos por sesión expirada
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("expired") === "true")
+    {
+      setToast("Tu sesión expiró. Iniciá sesión nuevamente.");
+    }
+  }, [location]);
+
+  // 🔹 Autoocultar toast
+  useEffect(() => {
+    if (toast)
+    {
+      const timer = setTimeout(() => setToast(""), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,16 +35,11 @@ export default function Login() {
     {
       const response = await fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
-      if (!response.ok)
-      {
-        throw new Error("Credenciales inválidas");
-      }
+      if (!response.ok) throw new Error("Credenciales inválidas");
 
       const data = await response.json();
       localStorage.setItem("token", data.token);
@@ -67,6 +82,21 @@ export default function Login() {
             </button>
           </form>
         </div>
+        {/* Toast de sesión expirada */}
+        {toast && (
+          <div className="fixed bottom-6 right-6 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
+            {toast}
+          </div>
+        )}
+        <style>{`
+          @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-fade-in {
+            animation: fade-in 0.4s ease-out;
+          }
+        `}</style>
       </div>
 
       {/* Sección derecha con el logo SGACER */}

@@ -14,6 +14,7 @@ import TratamientoFormModal from "../components/TratamientoFormModal";
 import ModalConfirm from "../components/ModalConfirm";
 import PageTitle from "../components/PageTitle";
 import { Input } from 'antd';
+import { apiFetch } from "../utils/api";
 
 export default function Tratamientos() {
     const [tratamientos, setTratamientos] = useState([]);
@@ -29,7 +30,7 @@ export default function Tratamientos() {
     const loadTratamientos = async () => {
         try
         {
-            const res = await fetch(
+            const res = await apiFetch(
                 `http://localhost:8080/api/tratamientos?page=${page}&size=5&sort=id,asc`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -105,7 +106,7 @@ export default function Tratamientos() {
     const confirmDelete = async (id) => {
         try
         {
-            const res = await fetch(`http://localhost:8080/api/tratamientos/${id}`, {
+            const res = await apiFetch(`http://localhost:8080/api/tratamientos/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });

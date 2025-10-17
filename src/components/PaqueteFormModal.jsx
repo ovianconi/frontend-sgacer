@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
+import { apiFetch } from "../utils/api";
 
 export default function PaqueteFormModal({ open, onClose, onSaved, initialData }) {
     const token = getToken();
@@ -11,7 +12,7 @@ export default function PaqueteFormModal({ open, onClose, onSaved, initialData }
     const [seleccion, setSeleccion] = useState([]);
 
     const api = (url, options = {}) =>
-        fetch(url, {
+        apiFetch(url, {
             ...options,
             headers: {
                 "Content-Type": "application/json",

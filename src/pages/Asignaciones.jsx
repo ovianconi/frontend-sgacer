@@ -13,6 +13,7 @@ import {
 import AsignarPaqueteModal from "../components/AsignarPaqueteModal";
 import ModalConfirm from "../components/ModalConfirm";
 import { Input } from 'antd';
+import { apiFetch } from "../utils/api";
 
 export default function Asignaciones() {
   const [asignaciones, setAsignaciones] = useState([]);
@@ -29,7 +30,7 @@ export default function Asignaciones() {
   const loadAsignaciones = async () => {
     try
     {
-      const res = await fetch(
+      const res = await apiFetch(
         `http://localhost:8080/api/asignaciones?page=${page}&size=5&sort=id,desc`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -109,23 +110,37 @@ export default function Asignaciones() {
   const confirmDelete = async (id) => {
     try
     {
-      const res = await fetch(`http://localhost:8080/api/asignaciones/${id}`, {
+      const res = await apiFetch(`http://localhost:8080/api/asignaciones/${id}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (!res.ok && res.status !== 204)
+      if (!res.ok) //if (!res.ok && res.status !== 204)
       {
-        toast.error("No se pudo eliminar la asignación.");
-        return;
+        let message = "No se pudo eliminar la asignación";
+        try
+        {
+          const errorData = await res.json();
+          if (errorData?.message)
+          {
+            message = errorData.message;
+          }
+        } catch (_)
+        {
+          /* ignorar si no viene JSON */
+        }
+        throw new Error(message);
       }
 
-      toast.success("Asignación eliminada");
+      toast.success("Asignación eliminada correctamente");
+      // Aquí refrescas la lista de asignaciones:
       loadAsignaciones();
     } catch (err)
     {
-      console.error(err);
-      toast.error("Error al eliminar asignación");
+      console.error("Error al eliminar asignación:", err);
+      toast.error(err.message || "Error de red al eliminar asignación");
     }
   };
 

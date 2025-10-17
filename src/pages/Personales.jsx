@@ -14,6 +14,7 @@ import PersonalFormModal from "../components/PersonalFormModal";
 import ModalConfirm from "../components/ModalConfirm";
 import PageTitle from "../components/PageTitle";
 import { Input } from 'antd';
+import { apiFetch } from "../utils/api";
 
 export default function Personales() {
     const [personales, setPersonales] = useState([]);
@@ -29,7 +30,7 @@ export default function Personales() {
     const loadPersonales = async () => {
         try
         {
-            const res = await fetch(
+            const res = await apiFetch(
                 `http://localhost:8080/api/personales?page=${page}&size=5&sort=id,asc`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -103,7 +104,7 @@ export default function Personales() {
     const confirmDelete = async (id) => {
         try
         {
-            const res = await fetch(`http://localhost:8080/api/personales/${id}`, {
+            const res = await apiFetch(`http://localhost:8080/api/personales/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });

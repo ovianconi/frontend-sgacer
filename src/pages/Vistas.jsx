@@ -13,6 +13,7 @@ import {
 import ModalConfirm from "../components/ModalConfirm";
 import PageTitle from "../components/PageTitle";
 import { Input } from "antd";
+import { apiFetch } from "../utils/api";
 
 export default function Vistas() {
   const [vistas, setVistas] = useState([]);
@@ -28,7 +29,7 @@ export default function Vistas() {
   const loadVistas = async () => {
     try
     {
-      const res = await fetch("http://localhost:8080/api/vistas", {
+      const res = await apiFetch("http://localhost:8080/api/vistas", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error al cargar vistas");
@@ -62,7 +63,7 @@ export default function Vistas() {
 
     try
     {
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +89,7 @@ export default function Vistas() {
   const handleDelete = async (id) => {
     try
     {
-      const res = await fetch(`http://localhost:8080/api/vistas/${id}`, {
+      const res = await apiFetch(`http://localhost:8080/api/vistas/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

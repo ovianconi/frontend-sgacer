@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
+import { apiFetch } from "../utils/api";
 
 export default function EquipoFormModal({ open, onClose, onSubmit, initialData }) {
     const [form, setForm] = useState({ nombre: "", codigo: "", tratamientos: [] });
@@ -27,7 +28,7 @@ export default function EquipoFormModal({ open, onClose, onSubmit, initialData }
         const loadTratamientos = async () => {
             try
             {
-                const res = await fetch("http://localhost:8080/api/tratamientos", {
+                const res = await apiFetch("http://localhost:8080/api/tratamientos", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!res.ok) throw new Error("Error al cargar tratamientos");
@@ -68,7 +69,7 @@ export default function EquipoFormModal({ open, onClose, onSubmit, initialData }
                 tratamientos: form.tratamientos.map((t) => ({ id: t.value })),
             };
 
-            const res = await fetch(url, {
+            const res = await apiFetch(url, {
                 method,
                 headers: {
                     "Content-Type": "application/json",

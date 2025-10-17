@@ -12,6 +12,7 @@ import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
 import ModalConfirm from "../components/ModalConfirm";
 import { Input } from 'antd';
+import { apiFetch } from "../utils/api";
 
 export default function Roles() {
   const [roles, setRoles] = useState([]);
@@ -24,7 +25,7 @@ export default function Roles() {
   const token = getToken();
 
   const loadRoles = () => {
-    fetch("http://localhost:8080/api/roles", {
+    apiFetch("http://localhost:8080/api/roles", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

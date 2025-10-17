@@ -12,6 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { Input } from "antd";
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
+import { apiFetch } from "../utils/api";
 
 export default function RolVistas() {
   const [roles, setRoles] = useState([]);
@@ -28,7 +29,7 @@ export default function RolVistas() {
   const loadRoles = async () => {
     try
     {
-      const res = await fetch("http://localhost:8080/api/roles", {
+      const res = await apiFetch("http://localhost:8080/api/roles", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error al cargar roles");
@@ -43,7 +44,7 @@ export default function RolVistas() {
   const loadVistas = async () => {
     try
     {
-      const res = await fetch("http://localhost:8080/api/vistas", {
+      const res = await apiFetch("http://localhost:8080/api/vistas", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error al cargar vistas");
@@ -58,7 +59,7 @@ export default function RolVistas() {
   const loadRolVistas = async (rolId) => {
     try
     {
-      const res = await fetch(`http://localhost:8080/api/roles/${rolId}/vistas`, {
+      const res = await apiFetch(`http://localhost:8080/api/roles/${rolId}/vistas`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error al cargar vistas del rol");
@@ -99,7 +100,7 @@ export default function RolVistas() {
           ? selectedRol.nombre
           : `ROLE_${selectedRol.nombre}`;
 
-      const res = await fetch(
+      const res = await apiFetch(
         `http://localhost:8080/api/roles/${selectedRol.id}/vistas`,
         {
           method: "POST",

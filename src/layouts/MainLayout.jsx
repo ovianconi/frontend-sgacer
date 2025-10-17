@@ -1,4 +1,3 @@
-// MainLayout.jsx
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { removeToken, getToken } from "../utils/auth";
 import { useEffect, useState } from "react";
@@ -6,12 +5,15 @@ import * as MuiIcons from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import LogoutIcon from "@mui/icons-material/Logout";
+import ConfirmLogoutModal from "../components/ConfirmLogoutModal"; // Importamos el modal
+import { apiFetch } from "../utils/api";
 
 export default function MainLayout() {
   const navigate = useNavigate();
   const token = getToken();
   const [collapsed, setCollapsed] = useState(true);
   const [vistas, setVistas] = useState([]);
+  const [showConfirmLogout, setShowConfirmLogout] = useState(false); // Estado para el modal de confirmación de cierre
 
   useEffect(() => {
     if (!token)
@@ -35,8 +37,18 @@ export default function MainLayout() {
   }, [token, navigate]);
 
   const handleLogout = () => {
+    // Mostramos el modal de confirmación antes de hacer logout
+    setShowConfirmLogout(true);
+  };
+
+  const confirmLogout = () => {
     removeToken();
     navigate("/login");
+    setShowConfirmLogout(false); // Cerramos el modal después de confirmar
+  };
+
+  const cancelLogout = () => {
+    setShowConfirmLogout(false); // Simplemente cerramos el modal sin hacer nada
   };
 
   const toggleSidebar = () => {
@@ -47,8 +59,7 @@ export default function MainLayout() {
     <div className="flex h-screen w-screen bg-gray-100">
       {/* Sidebar */}
       <aside
-        className={`transition-all duration-300 bg-white shadow-md flex flex-col ${collapsed ? "w-16" : "w-64"
-          }`}
+        className={`transition-all duration-300 bg-white shadow-md flex flex-col ${collapsed ? "w-16" : "w-64"}`}
       >
         <a
           onClick={toggleSidebar}
@@ -100,6 +111,13 @@ export default function MainLayout() {
           <Outlet context={{ vistasDisponibles: vistas }} />
         </main>
       </div>
+
+      {/* Modal de Confirmación de Cierre de Sesión */}
+      <ConfirmLogoutModal
+        open={showConfirmLogout}
+        onClose={cancelLogout}
+        onConfirm={confirmLogout}
+      />
     </div>
   );
 }

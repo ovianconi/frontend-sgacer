@@ -4,6 +4,7 @@ import Select from "react-select";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
 import { getUserRoles } from "../utils/auth";
+import { apiFetch } from "../utils/api";
 
 export default function AsignarPaqueteModal({ open, onClose, onSubmit, initialData }) {
     const [clientes, setClientes] = useState([]);
@@ -26,10 +27,10 @@ export default function AsignarPaqueteModal({ open, onClose, onSubmit, initialDa
         const loadData = async () => {
             try
             {
-                const resClientes = await fetch("http://localhost:8080/api/clientes?size=1000", {
+                const resClientes = await apiFetch("http://localhost:8080/api/clientes?size=1000", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                const resPaquetes = await fetch("http://localhost:8080/api/paquetes?size=1000", {
+                const resPaquetes = await apiFetch("http://localhost:8080/api/paquetes?size=1000", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -90,7 +91,7 @@ export default function AsignarPaqueteModal({ open, onClose, onSubmit, initialDa
                 ? `http://localhost:8080/api/asignaciones/${initialData.id}`
                 : "http://localhost:8080/api/asignaciones";
 
-            const res = await fetch(url, {
+            const res = await apiFetch(url, {
                 method,
                 headers: {
                     "Content-Type": "application/json",

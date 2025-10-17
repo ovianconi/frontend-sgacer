@@ -14,6 +14,7 @@ import ClienteFormModal from "../components/ClienteFormModal";
 import ModalConfirm from "../components/ModalConfirm";
 import PageTitle from "../components/PageTitle";
 import { Input } from 'antd';
+import { apiFetch } from "../utils/api";
 
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
@@ -25,7 +26,7 @@ export default function Clientes() {
   const token = getToken();
 
   const loadClientes = () => {
-    fetch("http://localhost:8080/api/clientes", {
+    apiFetch("http://localhost:8080/api/clientes", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -84,7 +85,7 @@ export default function Clientes() {
   const confirmDelete = async (id) => {
     try
     {
-      const res = await fetch(`http://localhost:8080/api/clientes/${id}`, {
+      const res = await apiFetch(`http://localhost:8080/api/clientes/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -112,7 +113,7 @@ export default function Clientes() {
         ? `http://localhost:8080/api/clientes/${editingCliente.id}`
         : "http://localhost:8080/api/clientes";
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",

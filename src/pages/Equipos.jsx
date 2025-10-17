@@ -14,6 +14,7 @@ import EquipoFormModal from "../components/EquipoFormModal";
 import ModalConfirm from "../components/ModalConfirm";
 import PageTitle from "../components/PageTitle";
 import { Input } from 'antd';
+import { apiFetch } from "../utils/api";
 
 export default function Equipos() {
     const [equipos, setEquipos] = useState([]);
@@ -29,7 +30,7 @@ export default function Equipos() {
     const loadEquipos = async () => {
         try
         {
-            const res = await fetch(
+            const res = await apiFetch(
                 `http://localhost:8080/api/equipos?page=${page}&size=5&sort=nombre,asc`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -114,7 +115,7 @@ export default function Equipos() {
     const confirmDelete = async (id) => {
         try
         {
-            const res = await fetch(`http://localhost:8080/api/equipos/${id}`, {
+            const res = await apiFetch(`http://localhost:8080/api/equipos/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });

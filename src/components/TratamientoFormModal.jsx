@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
+import { apiFetch } from "../utils/api";
 
 export default function TratamientoFormModal({ open, onClose, onSubmit, initialData }) {
     const [form, setForm] = useState({ nombre: "", descripcion: "", requiereEquipo: false });
@@ -33,7 +34,7 @@ export default function TratamientoFormModal({ open, onClose, onSubmit, initialD
                 ? `http://localhost:8080/api/tratamientos/${initialData.id}`
                 : "http://localhost:8080/api/tratamientos";
 
-            const res = await fetch(url, {
+            const res = await apiFetch(url, {
                 method,
                 headers: {
                     "Content-Type": "application/json",

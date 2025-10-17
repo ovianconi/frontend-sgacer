@@ -13,6 +13,7 @@ import {
 import ModalConfirm from "../components/ModalConfirm";
 import PaqueteFormModal from "../components/PaqueteFormModal";
 import { Input } from 'antd';
+import { apiFetch } from "../utils/api";
 
 const columnHelper = createColumnHelper();
 
@@ -25,7 +26,7 @@ export default function Paquetes() {
     const [deleteId, setDeleteId] = useState(null);
 
     const api = (url, options = {}) =>
-        fetch(url, {
+        apiFetch(url, {
             ...options,
             headers: {
                 "Content-Type": "application/json",

@@ -1,39 +1,62 @@
-// src/components/UsuarioFormModal.jsx
 import { useEffect, useState } from "react";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
+import { apiFetch } from "../utils/api";
 
 export default function UsuarioFormModal({ open, onClose, onSubmit, initialData, roles }) {
     const [form, setForm] = useState({
         username: "",
         password: "",
+        confirmPassword: "",
         rolId: "",
     });
+    const [touchedConfirm, setTouchedConfirm] = useState(false); // Nuevo estado
 
     const token = getToken();
 
     useEffect(() => {
+        // Si estamos en modo edición, cargamos los datos iniciales
         if (initialData)
         {
             setForm({
                 username: initialData.username || "",
                 password: "",
+                confirmPassword: "",
                 rolId: initialData.roles?.[0]?.id || "",
             });
         } else
         {
-            setForm({ username: "", password: "", rolId: "" });
+            // Si estamos en "crear", reiniciamos el formulario
+            setForm({ username: "", password: "", confirmPassword: "", rolId: "" });
         }
-    }, [initialData]);
+        setTouchedConfirm(false); // Resetear "touchedConfirm" cuando cambiemos de estado
+    }, [initialData, open]); // Dependemos de `initialData` y `open` para resetear el formulario al abrir
 
     if (!open) return null;
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setForm({ ...form, [name]: value });
+
+        if (name === "confirmPassword" && !touchedConfirm)
+        {
+            setTouchedConfirm(true); // Marcar como tocado en cuanto escribe en confirmar contraseña
+        }
     };
+
+    const contraseñasNoCoinciden =
+        touchedConfirm &&
+        form.confirmPassword &&
+        form.password !== form.confirmPassword;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (form.password !== form.confirmPassword)
+        {
+            toast.error("Las contraseñas no coinciden");
+            return;
+        }
 
         const method = initialData ? "PUT" : "POST";
         const url = initialData
@@ -42,13 +65,13 @@ export default function UsuarioFormModal({ open, onClose, onSubmit, initialData,
 
         const payload = {
             username: form.username,
-            password: form.password || undefined, // si no edita password, no enviar
+            password: form.password || undefined,
             rolId: form.rolId,
         };
 
         try
         {
-            const res = await fetch(url, {
+            const res = await apiFetch(url, {
                 method,
                 headers: {
                     "Content-Type": "application/json",
@@ -97,6 +120,22 @@ export default function UsuarioFormModal({ open, onClose, onSubmit, initialData,
                         className="border p-2 rounded"
                         {...(!initialData && { required: true })}
                     />
+                    <input
+                        type="password"
+                        name="confirmPassword"
+                        placeholder="Confirmar Contraseña"
+                        value={form.confirmPassword}
+                        onChange={handleChange}
+                        className="border p-2 rounded"
+                    />
+
+                    {/* Mostrar error solo si ya empezó a escribir confirmación y no coinciden */}
+                    {contraseñasNoCoinciden && (
+                        <div className="text-red-600 text-sm">
+                            Las contraseñas no coinciden
+                        </div>
+                    )}
+
                     <select
                         name="rolId"
                         value={form.rolId}
