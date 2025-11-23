@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function UsuarioFormModal({ open, onClose, onSubmit, initialData, roles }) {
     const [form, setForm] = useState({
@@ -60,8 +61,8 @@ export default function UsuarioFormModal({ open, onClose, onSubmit, initialData,
 
         const method = initialData ? "PUT" : "POST";
         const url = initialData
-            ? `http://localhost:8080/api/usuarios/${initialData.id}`
-            : "http://localhost:8080/api/usuarios";
+            ? `${API_BASE}/usuarios/${initialData.id}`
+            : `${API_BASE}/usuarios`;
 
         const payload = {
             username: form.username,

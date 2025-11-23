@@ -7,7 +7,6 @@ import {
     getCoreRowModel,
     getSortedRowModel,
     getFilteredRowModel,
-    getPaginationRowModel,
     flexRender,
 } from "@tanstack/react-table";
 import PersonalFormModal from "../components/PersonalFormModal";
@@ -15,6 +14,7 @@ import ModalConfirm from "../components/ModalConfirm";
 import PageTitle from "../components/PageTitle";
 import { Input } from 'antd';
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function Personales() {
     const [personales, setPersonales] = useState([]);
@@ -22,8 +22,11 @@ export default function Personales() {
     const [editingPersonal, setEditingPersonal] = useState(null);
     const [deleteId, setDeleteId] = useState(null);
     const [globalFilter, setGlobalFilter] = useState("");
+
+    // 🔧 Estado de paginación controlado por el backend
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
     const token = getToken();
 
@@ -31,10 +34,12 @@ export default function Personales() {
         try
         {
             const res = await apiFetch(
-                `http://localhost:8080/api/personales?page=${page}&size=5&sort=id,asc`,
+                `${API_BASE}/personales?page=${page}&size=${pageSize}&sort=id,asc`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
+
             if (!res.ok) throw new Error("Error al cargar personal");
+
             const data = await res.json();
             setPersonales(Array.isArray(data.content) ? data.content : []);
             setTotalPages(data.totalPages ?? 1);
@@ -46,9 +51,10 @@ export default function Personales() {
         }
     };
 
+    // 🔧 Cada vez que cambia la página o el tamaño, recargamos desde el backend
     useEffect(() => {
         loadPersonales();
-    }, [token, page]);
+    }, [token, page, pageSize]);
 
     const columns = [
         { accessorKey: "nombre", header: "Nombre" },
@@ -98,13 +104,12 @@ export default function Personales() {
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
     });
 
     const confirmDelete = async (id) => {
         try
         {
-            const res = await apiFetch(`http://localhost:8080/api/personales/${id}`, {
+            const res = await apiFetch(`${API_BASE}/personales/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -178,50 +183,40 @@ export default function Personales() {
                 </tbody>
             </table>
 
+            {/* 🔧 Paginación controlada por el backend */}
             <div className="flex justify-between items-center mt-4">
                 <div className="space-x-2">
-                    {/*<button
-                    onClick={() => table.setPageIndex(0)}
-                    disabled={!table.getCanPreviousPage()}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
-                    >
-                    ⏮️ Primera
-                    </button>*/}
                     <button
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
+                        onClick={() => setPage((p) => Math.max(p - 1, 0))}
+                        disabled={page === 0}
                         className="px-3 py-1 border rounded disabled:opacity-50"
                     >
                         ⬅️ Anterior
                     </button>
                     <button
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
+                        onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
+                        disabled={page >= totalPages - 1}
                         className="px-3 py-1 border rounded disabled:opacity-50"
                     >
                         Siguiente ➡️
                     </button>
-                    {/*<button
-                    onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                    disabled={!table.getCanNextPage()}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
-                    >
-                    Última ⏭️
-                    </button>*/}
                 </div>
 
                 <span>
-                    Página {table.getState().pagination.pageIndex + 1} de{" "}
-                    {table.getPageCount()}
+                    Página {page + 1} de {totalPages}
                 </span>
+
                 <div className="flex items-center gap-2">
                     <label htmlFor="pageSize" className="text-sm text-gray-700">
                         Mostrar:
                     </label>
                     <select
                         id="pageSize"
-                        value={table.getState().pagination.pageSize}
-                        onChange={(e) => table.setPageSize(Number(e.target.value))}
+                        value={pageSize}
+                        onChange={(e) => {
+                            setPageSize(Number(e.target.value));
+                            setPage(0); // Reiniciar a la primera página
+                        }}
                         className="border rounded p-1 text-sm"
                     >
                         {[5, 10, 20, 50, 100].map((size) => (

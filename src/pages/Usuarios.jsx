@@ -14,6 +14,7 @@ import {
 } from "@tanstack/react-table";
 import { Input } from 'antd';
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
@@ -28,7 +29,7 @@ export default function Usuarios() {
   const loadUsuarios = async () => {
     try
     {
-      const res = await apiFetch("http://localhost:8080/api/usuarios", {
+      const res = await apiFetch(`${API_BASE}/usuarios`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -42,7 +43,7 @@ export default function Usuarios() {
   const loadRoles = async () => {
     try
     {
-      const res = await apiFetch("http://localhost:8080/api/roles", {
+      const res = await apiFetch(`${API_BASE}/roles`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -106,7 +107,7 @@ export default function Usuarios() {
   const confirmDelete = async (id) => {
     try
     {
-      const res = await apiFetch(`http://localhost:8080/api/usuarios/${id}`, {
+      const res = await apiFetch(`${API_BASE}/usuarios/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

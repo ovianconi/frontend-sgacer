@@ -1,13 +1,39 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { TextField, InputAdornment } from '@mui/material';
+import KeyIcon from '@mui/icons-material/Key';
+import PersonIcon from '@mui/icons-material/Person';
+import { API_BASE } from "../utils/apiBase";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
+  const [currentDate, setCurrentDate] = useState({ day: "31", month: "NOV" });
   const navigate = useNavigate();
   const location = useLocation();
+
+  // 🔹 Función para obtener el nombre del mes en español
+  const getMonthName = (month) => {
+    const months = [
+      'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN',
+      'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'
+    ];
+    return months[month];
+  };
+
+  // 🔹 Actualizar fecha actual
+  useEffect(() => {
+    const now = new Date();
+    const day = now.getDate();
+    const month = now.getMonth();
+
+    setCurrentDate({
+      day: day < 10 ? `0${day}` : day.toString(),
+      month: getMonthName(month)
+    });
+  }, []);
 
   // 🔹 Detectar si venimos por sesión expirada
   useEffect(() => {
@@ -33,7 +59,7 @@ export default function Login() {
 
     try
     {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const response = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -52,26 +78,48 @@ export default function Login() {
 
   return (
     <div className="min-h-screen w-screen flex">
-      {/* Sección izquierda con formulario */}
-      <div className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 p-8">
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+      {/* 🔹 Sección izquierda (azul) - un poco más ancha */}
+      <div className="relative flex-[0.3] flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 p-8">
+        <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md z-10">
           <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-            Iniciar Sesión
+            Iniciar sesión
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Usuario"
+            {/* Usuario */}
+            <TextField
+              variant="outlined"
+              label="Usuario"
+              fullWidth
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <PersonIcon />
+                    </InputAdornment>
+                  )
+                }
+              }}
             />
-            <input
+
+            {/* Contraseña */}
+            <TextField
+              variant="outlined"
+              label="Contraseña"
               type="password"
-              placeholder="Contraseña"
+              fullWidth
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <KeyIcon />
+                    </InputAdornment>
+                  )
+                }
+              }}
             />
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <button
@@ -82,6 +130,19 @@ export default function Login() {
             </button>
           </form>
         </div>
+
+        {/* 🔹 Enlace discreto a la Política de Privacidad */}
+        <div className="absolute bottom-4 right-6 text-right">
+          <Link
+            to="/privacidad"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-300 text-xs hover:text-white transition-colors"
+          >
+            Política de Privacidad
+          </Link>
+        </div>
+
         {/* Toast de sesión expirada */}
         {toast && (
           <div className="fixed bottom-6 right-6 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
@@ -99,18 +160,17 @@ export default function Login() {
         `}</style>
       </div>
 
-      {/* Sección derecha con el logo SGACER */}
-      <div className="flex-1 flex items-center justify-center bg-white p-8">
+      {/* 🔹 Sección derecha (blanca) - un poco más fina */}
+      <div className="flex-[0.7] flex items-center justify-center bg-white p-8">
         <div className="logo-container">
           <div className="logo">
             <div className="logo-inner">
               <div className="symbol">
                 <div className="calendar-icon">
                   <div className="calendar-top">
-                    <div className="calendar-notch"></div>
-                    <div className="calendar-notch"></div>
+                    <div className="calendar-month">{currentDate.month}</div>
                   </div>
-                  <div className="calendar-day">31</div>
+                  <div className="calendar-day">{currentDate.day}</div>
                   <div className="calendar-lines">
                     <div className="line"></div>
                     <div className="line short"></div>
@@ -119,13 +179,15 @@ export default function Login() {
               </div>
               <div className="name">
                 <div className="acronym">SGACER</div>
-                <div className="full-name">Sistema de Gestión de Agendamientos para Clínicas de Estética y Rehabilitación</div>
+                <div className="full-name">
+                  Sistema de Gestión de Agendamientos para Clínicas de Estética y Rehabilitación
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Estilos integrados para el logo */}
+        {/* Estilos del logo */}
         <style>{`
           .logo-container {
             position: relative;
@@ -135,7 +197,6 @@ export default function Login() {
             justify-content: center;
             align-items: center;
           }
-          
           .logo {
             position: relative;
             width: 300px;
@@ -149,7 +210,6 @@ export default function Login() {
             box-shadow: 0 15px 35px rgba(0, 82, 155, 0.15);
             overflow: hidden;
           }
-          
           .logo::before {
             content: '';
             position: absolute;
@@ -162,7 +222,6 @@ export default function Login() {
             );
             animation: rotate 10s linear infinite;
           }
-          
           .logo-inner {
             position: absolute;
             inset: 5px;
@@ -176,7 +235,6 @@ export default function Login() {
             padding: 20px;
             box-sizing: border-box;
           }
-          
           .symbol {
             width: 100px;
             height: 100px;
@@ -185,7 +243,6 @@ export default function Login() {
             align-items: center;
             margin-bottom: 20px;
           }
-          
           .calendar-icon {
             position: relative;
             width: 70px;
@@ -195,7 +252,6 @@ export default function Login() {
             box-shadow: 0 5px 15px rgba(0, 88, 166, 0.2);
             overflow: hidden;
           }
-          
           .calendar-top {
             position: absolute;
             top: 0;
@@ -207,7 +263,13 @@ export default function Login() {
             justify-content: center;
             align-items: center;
           }
-          
+          .calendar-month {
+            color: gray;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+          }
           .calendar-notch {
             width: 12px;
             height: 4px;
@@ -215,43 +277,37 @@ export default function Login() {
             border-radius: 2px;
             margin: 0 2px;
           }
-          
           .calendar-day {
             position: absolute;
-            top: 25px;
-            left: 0;
-            width: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
             text-align: center;
-            font-size: 28px;
-            font-weight: 600;
-            color: #0078D7;
           }
-          
           .calendar-lines {
             position: absolute;
-            bottom: 10px;
+            bottom: 8px;
             left: 10px;
             right: 10px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
           }
-          
           .line {
-            height: 3px;
-            background: rgba(0, 88, 166, 0.15);
-            border-radius: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 1px;
           }
-          
           .line.short {
             width: 60%;
           }
-          
           .name {
             text-align: center;
             margin-top: 10px;
           }
-          
           .acronym {
             font-size: 32px;
             font-weight: 700;
@@ -259,28 +315,15 @@ export default function Login() {
             letter-spacing: 1px;
             margin-bottom: 5px;
           }
-          
           .full-name {
             font-size: 14px;
             color: #5A7D9E;
             font-weight: 500;
             letter-spacing: 0.5px;
           }
-          
-          .tagline {
-            font-size: 12px;
-            color: #7D95B0;
-            margin-top: 8px;
-            font-weight: 400;
-          }
-          
           @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
           }
         `}</style>
       </div>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function TratamientoFormModal({ open, onClose, onSubmit, initialData }) {
     const [form, setForm] = useState({ nombre: "", descripcion: "", requiereEquipo: false });
@@ -31,8 +32,8 @@ export default function TratamientoFormModal({ open, onClose, onSubmit, initialD
         {
             const method = initialData ? "PUT" : "POST";
             const url = initialData
-                ? `http://localhost:8080/api/tratamientos/${initialData.id}`
-                : "http://localhost:8080/api/tratamientos";
+                ? `${API_BASE}/tratamientos/${initialData.id}`
+                : `${API_BASE}/tratamientos`;
 
             const res = await apiFetch(url, {
                 method,

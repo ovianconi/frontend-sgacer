@@ -5,6 +5,7 @@ import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
 import { getUserRoles } from "../utils/auth";
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function AsignarPaqueteModal({ open, onClose, onSubmit, initialData }) {
     const [clientes, setClientes] = useState([]);
@@ -27,10 +28,10 @@ export default function AsignarPaqueteModal({ open, onClose, onSubmit, initialDa
         const loadData = async () => {
             try
             {
-                const resClientes = await apiFetch("http://localhost:8080/api/clientes?size=1000", {
+                const resClientes = await apiFetch(`${API_BASE}/clientes?size=1000`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                const resPaquetes = await apiFetch("http://localhost:8080/api/paquetes?size=1000", {
+                const resPaquetes = await apiFetch(`${API_BASE}/paquetes?size=1000`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -88,8 +89,8 @@ export default function AsignarPaqueteModal({ open, onClose, onSubmit, initialDa
         {
             const method = initialData ? "PUT" : "POST";
             const url = initialData
-                ? `http://localhost:8080/api/asignaciones/${initialData.id}`
-                : "http://localhost:8080/api/asignaciones";
+                ? `${API_BASE}/asignaciones/${initialData.id}`
+                : `${API_BASE}/asignaciones`;
 
             const res = await apiFetch(url, {
                 method,

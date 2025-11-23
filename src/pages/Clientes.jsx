@@ -15,6 +15,7 @@ import ModalConfirm from "../components/ModalConfirm";
 import PageTitle from "../components/PageTitle";
 import { Input } from 'antd';
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
@@ -26,7 +27,7 @@ export default function Clientes() {
   const token = getToken();
 
   const loadClientes = () => {
-    apiFetch("http://localhost:8080/api/clientes", {
+    apiFetch(`${API_BASE}/clientes`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -85,7 +86,7 @@ export default function Clientes() {
   const confirmDelete = async (id) => {
     try
     {
-      const res = await apiFetch(`http://localhost:8080/api/clientes/${id}`, {
+      const res = await apiFetch(`${API_BASE}/clientes/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -110,8 +111,8 @@ export default function Clientes() {
     {
       const method = editingCliente ? "PUT" : "POST";
       const url = editingCliente
-        ? `http://localhost:8080/api/clientes/${editingCliente.id}`
-        : "http://localhost:8080/api/clientes";
+        ? `${API_BASE}/clientes/${editingCliente.id}`
+        : `${API_BASE}/clientes`;
 
       const res = await apiFetch(url, {
         method,

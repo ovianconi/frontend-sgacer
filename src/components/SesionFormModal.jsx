@@ -4,6 +4,7 @@ import Select from "react-select";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function SesionFormModal({ isOpen, initialDate, initialTime, onClose, onCreated }) {
     const [clientes, setClientes] = useState([]);
@@ -23,7 +24,7 @@ export default function SesionFormModal({ isOpen, initialDate, initialTime, onCl
         const loadClientes = async () => {
             try
             {
-                const res = await apiFetch("http://localhost:8080/api/clientes/con-paquetes", {
+                const res = await apiFetch(`${API_BASE}/clientes/con-paquetes`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!res.ok) throw new Error("Error al cargar clientes");
@@ -53,7 +54,7 @@ export default function SesionFormModal({ isOpen, initialDate, initialTime, onCl
             try
             {
                 const res = await apiFetch(
-                    `http://localhost:8080/api/clientes/${selectedCliente.value}/tratamientos-disponibles`,
+                    `${API_BASE}/clientes/${selectedCliente.value}/tratamientos-disponibles`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
@@ -87,7 +88,7 @@ export default function SesionFormModal({ isOpen, initialDate, initialTime, onCl
 
         try
         {
-            const res = await apiFetch("http://localhost:8080/api/sesiones/dto", {
+            const res = await apiFetch(`${API_BASE}/sesiones/dto`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -4,6 +4,7 @@ import Select from "react-select";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function PersonalFormModal({ open, onClose, onSubmit, initialData }) {
     const [form, setForm] = useState({
@@ -22,7 +23,7 @@ export default function PersonalFormModal({ open, onClose, onSubmit, initialData
         const loadTratamientos = async () => {
             try
             {
-                const res = await apiFetch(`http://localhost:8080/api/tratamientos?page=0&size=1000`, {
+                const res = await apiFetch(`${API_BASE}/tratamientos?page=0&size=1000`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!res.ok) throw new Error("No se pudieron cargar tratamientos");
@@ -92,7 +93,7 @@ export default function PersonalFormModal({ open, onClose, onSubmit, initialData
             let res;
             if (initialData && initialData.id)
             {
-                res = await apiFetch(`http://localhost:8080/api/personales/${initialData.id}`, {
+                res = await apiFetch(`${API_BASE}/personales/${initialData.id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
@@ -102,7 +103,7 @@ export default function PersonalFormModal({ open, onClose, onSubmit, initialData
                 });
             } else
             {
-                res = await apiFetch(`http://localhost:8080/api/personales`, {
+                res = await apiFetch(`${API_BASE}/personales`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

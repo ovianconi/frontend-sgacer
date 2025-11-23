@@ -4,6 +4,7 @@ import Select from "react-select";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function EquipoFormModal({ open, onClose, onSubmit, initialData }) {
     const [form, setForm] = useState({ nombre: "", codigo: "", tratamientos: [] });
@@ -28,7 +29,7 @@ export default function EquipoFormModal({ open, onClose, onSubmit, initialData }
         const loadTratamientos = async () => {
             try
             {
-                const res = await apiFetch("http://localhost:8080/api/tratamientos", {
+                const res = await apiFetch(`${API_BASE}/tratamientos`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 if (!res.ok) throw new Error("Error al cargar tratamientos");
@@ -60,8 +61,8 @@ export default function EquipoFormModal({ open, onClose, onSubmit, initialData }
         {
             const method = initialData ? "PUT" : "POST";
             const url = initialData
-                ? `http://localhost:8080/api/equipos/${initialData.id}`
-                : "http://localhost:8080/api/equipos";
+                ? `${API_BASE}/equipos/${initialData.id}`
+                : `${API_BASE}/equipos`;
 
             const payload = {
                 nombre: form.nombre,

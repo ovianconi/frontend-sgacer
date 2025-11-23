@@ -9,6 +9,7 @@ import PageTitle from "../components/PageTitle";
 import SesionFormModal from "../components/SesionFormModal";
 import SyncIcon from '@mui/icons-material/Sync';
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 const locales = { es };
 
@@ -39,7 +40,7 @@ export default function Sesiones() {
   const loadSesiones = async () => {
     try
     {
-      const res = await apiFetch("http://localhost:8080/api/sesiones", {
+      const res = await apiFetch(`${API_BASE}/sesiones`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -65,7 +66,7 @@ export default function Sesiones() {
 
   useEffect(() => {
     loadSesiones();
-    const interval = setInterval(loadSesiones, 30000);
+    const interval = setInterval(loadSesiones, 300000);
     return () => clearInterval(interval);
   }, []);
 
@@ -80,7 +81,7 @@ export default function Sesiones() {
     try
     {
       const res = await apiFetch(
-        `http://localhost:8080/api/sesiones/${selectedSesion.id}/cancelar`,
+        `${API_BASE}/sesiones/${selectedSesion.id}/cancelar`,
         {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
@@ -118,7 +119,7 @@ export default function Sesiones() {
     try
     {
       const res = await apiFetch(
-        `http://localhost:8080/api/sesiones/${selectedSesion.id}/usar`,
+        `${API_BASE}/sesiones/${selectedSesion.id}/usar`,
         {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
@@ -174,15 +175,15 @@ export default function Sesiones() {
   return (
     <div className="p-2">
       <div className="flex justify-between items-center mb-2">
-        <PageTitle>Calendario de Sesiones</PageTitle>
-        {/* 🔄 Botón de refresco manual 
+        <PageTitle>Calendario de Agendamientos</PageTitle>
+        {/* 🔄 Botón de refresco manual  */}
         <a
           onClick={loadSesiones}
           className="flex items-center px-4 py-2 rounded-xl cursor-pointer hover:bg-blue-500 hover:text-white"
         >
           <SyncIcon className="hover:bg-blue-500 hover:text-white" />
           <span className="ml-2">Refrescar</span>
-        </a>*/}
+        </a>
       </div>
 
       <Calendar

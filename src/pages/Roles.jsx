@@ -13,6 +13,7 @@ import { toast } from "react-hot-toast";
 import ModalConfirm from "../components/ModalConfirm";
 import { Input } from 'antd';
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function Roles() {
   const [roles, setRoles] = useState([]);
@@ -25,7 +26,7 @@ export default function Roles() {
   const token = getToken();
 
   const loadRoles = () => {
-    apiFetch("http://localhost:8080/api/roles", {
+    apiFetch(`${API_BASE}/roles`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -88,8 +89,8 @@ export default function Roles() {
     e.preventDefault();
     const method = editingRol ? "PUT" : "POST";
     const url = editingRol
-      ? `http://localhost:8080/api/roles/${editingRol.id}`
-      : "http://localhost:8080/api/roles";
+      ? `${API_BASE}/roles/${editingRol.id}`
+      : `${API_BASE}/roles`;
 
     const res = await fetch(url, {
       method,
@@ -114,7 +115,7 @@ export default function Roles() {
   };
 
   const confirmDelete = async (id) => {
-    const res = await fetch(`http://localhost:8080/api/roles/${id}`, {
+    const res = await fetch(`${API_BASE}/roles/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });

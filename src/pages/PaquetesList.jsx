@@ -14,6 +14,7 @@ import ModalConfirm from "../components/ModalConfirm";
 import PaqueteFormModal from "../components/PaqueteFormModal";
 import { Input } from 'antd';
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 const columnHelper = createColumnHelper();
 
@@ -36,7 +37,7 @@ export default function Paquetes() {
         });
 
     const load = () => {
-        api("http://localhost:8080/api/paquetes")
+        api(`${API_BASE}/paquetes`)
             .then((r) => r.json())
             .then(setRows)
             .catch((e) => console.error(e));
@@ -98,7 +99,7 @@ export default function Paquetes() {
     const confirmDelete = async (id) => {
         try
         {
-            const res = await api(`http://localhost:8080/api/paquetes/${id}`, { method: "DELETE" });
+            const res = await api(`${API_BASE}/paquetes/${id}`, { method: "DELETE" });
             if (!res.ok && res.status !== 204)
             {
                 toast.error("No se pudo eliminar.");

@@ -1,8 +1,7 @@
 // src/App.jsx
 import { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
 import Clientes from "./pages/Clientes";
 import Equipos from "./pages/Equipos";
 import MainLayout from "./layouts/MainLayout";
@@ -14,6 +13,8 @@ import Roles from "./pages/Roles";
 import Personales from "./pages/Personales";
 import Asignaciones from "./pages/Asignaciones";
 import Sesiones from "./pages/Sesiones";
+import Privacidad from "./pages/Privacidad";
+import ErrorPage from "./pages/ErrorPage";
 
 export default function App() {
   useEffect(() => {
@@ -35,12 +36,21 @@ export default function App() {
   return (
     <Router>
       <Routes>
+
+        {/* 🔹 Redirección de "/" a "/login" */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         {/* Login sin layout */}
         <Route path="/login" element={<Login />} />
 
+        {/* Página de Política de Privacidad sin layout */}
+        <Route path="/privacidad" element={<Privacidad />} />
+
+        {/* Página de Error sin layout */}
+        <Route path="/error" element={<ErrorPage />} />
+
         {/* Rutas protegidas con layout persistente */}
         <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/equipos" element={<Equipos />} />
           <Route path="/tratamientos" element={<Tratamientos />} />
@@ -52,6 +62,8 @@ export default function App() {
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/roles" element={<Roles />} />
         </Route>
+        {/* 🔹 Ruta comodín para páginas no existentes */}
+        <Route path="*" element={<Navigate to="/error" replace />} />
       </Routes>
     </Router>
   );

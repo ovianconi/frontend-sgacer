@@ -14,6 +14,7 @@ import ModalConfirm from "../components/ModalConfirm";
 import PageTitle from "../components/PageTitle";
 import { Input } from "antd";
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function Vistas() {
   const [vistas, setVistas] = useState([]);
@@ -29,7 +30,7 @@ export default function Vistas() {
   const loadVistas = async () => {
     try
     {
-      const res = await apiFetch("http://localhost:8080/api/vistas", {
+      const res = await apiFetch(`${API_BASE}/vistas`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error al cargar vistas");
@@ -54,8 +55,8 @@ export default function Vistas() {
 
     const method = editVista?.id ? "PUT" : "POST";
     const url = editVista?.id
-      ? `http://localhost:8080/api/vistas/${editVista.id}`
-      : "http://localhost:8080/api/vistas";
+      ? `${API_BASE}/vistas/${editVista.id}`
+      : `${API_BASE}/vistas`;
 
     // Limpiamos rolesPermitidos del payload antes de enviar
     const payload = { ...editVista };
@@ -89,7 +90,7 @@ export default function Vistas() {
   const handleDelete = async (id) => {
     try
     {
-      const res = await apiFetch(`http://localhost:8080/api/vistas/${id}`, {
+      const res = await apiFetch(`${API_BASE}/vistas/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

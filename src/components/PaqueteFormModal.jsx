@@ -3,6 +3,7 @@ import Select from "react-select";
 import { getToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function PaqueteFormModal({ open, onClose, onSaved, initialData }) {
     const token = getToken();
@@ -24,7 +25,7 @@ export default function PaqueteFormModal({ open, onClose, onSaved, initialData }
     useEffect(() => {
         if (!open) return;
 
-        api("http://localhost:8080/api/tratamientos")
+        api(`${API_BASE}/tratamientos`)
             .then((r) => r.json())
             .then((list) => setTratamientos(list || []))
             .catch(console.error);
@@ -101,8 +102,8 @@ export default function PaqueteFormModal({ open, onClose, onSaved, initialData }
         try
         {
             const url = initialData
-                ? `http://localhost:8080/api/paquetes/${initialData.id}`
-                : "http://localhost:8080/api/paquetes";
+                ? `${API_BASE}/paquetes/${initialData.id}`
+                : `${API_BASE}/paquetes`;
             const method = initialData ? "PUT" : "POST";
 
             const res = await api(url, { method, body });

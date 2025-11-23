@@ -15,6 +15,7 @@ import ModalConfirm from "../components/ModalConfirm";
 import PageTitle from "../components/PageTitle";
 import { Input } from 'antd';
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function Equipos() {
     const [equipos, setEquipos] = useState([]);
@@ -31,7 +32,7 @@ export default function Equipos() {
         try
         {
             const res = await apiFetch(
-                `http://localhost:8080/api/equipos?page=${page}&size=5&sort=nombre,asc`,
+                `${API_BASE}/equipos?page=${page}&size=5&sort=nombre,asc`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
@@ -115,7 +116,7 @@ export default function Equipos() {
     const confirmDelete = async (id) => {
         try
         {
-            const res = await apiFetch(`http://localhost:8080/api/equipos/${id}`, {
+            const res = await apiFetch(`${API_BASE}/equipos/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });

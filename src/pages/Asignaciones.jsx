@@ -14,6 +14,7 @@ import AsignarPaqueteModal from "../components/AsignarPaqueteModal";
 import ModalConfirm from "../components/ModalConfirm";
 import { Input } from 'antd';
 import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function Asignaciones() {
   const [asignaciones, setAsignaciones] = useState([]);
@@ -31,7 +32,7 @@ export default function Asignaciones() {
     try
     {
       const res = await apiFetch(
-        `http://localhost:8080/api/asignaciones?page=${page}&size=5&sort=id,desc`,
+        `${API_BASE}/asignaciones?page=${page}&size=5&sort=id,desc`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -110,7 +111,7 @@ export default function Asignaciones() {
   const confirmDelete = async (id) => {
     try
     {
-      const res = await apiFetch(`http://localhost:8080/api/asignaciones/${id}`, {
+      const res = await apiFetch(`${API_BASE}/asignaciones/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

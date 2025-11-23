@@ -6,7 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ConfirmLogoutModal from "../components/ConfirmLogoutModal"; // Importamos el modal
-import { apiFetch } from "../utils/api";
+import { API_BASE } from "../utils/apiBase";
 
 export default function MainLayout() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ export default function MainLayout() {
       navigate("/login");
     } else
     {
-      fetch("http://localhost:8080/api/vistas/disponibles", {
+      fetch(`${API_BASE}/vistas/disponibles`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => {
