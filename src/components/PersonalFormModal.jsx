@@ -169,8 +169,17 @@ export default function PersonalFormModal({ open, onClose, onSubmit, initialData
                         name="telefono"
                         placeholder="Teléfono"
                         value={form.telefono}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            // Permitir solo: + opcional y luego dígitos
+                            if (/^\+?\d*$/.test(value))
+                            {
+                                setForm({ ...form, telefono: value });
+                            }
+                        }}
                         className="border p-2 rounded"
+                        required
                     />
 
                     <div className="col-span-2">

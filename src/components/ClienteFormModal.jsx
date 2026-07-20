@@ -70,7 +70,15 @@ export default function ClienteFormModal({ open, onClose, onSubmit, initialData 
             name="telefono"
             placeholder="Teléfono"
             value={form.telefono}
-            onChange={handleChange}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              // Permitir solo: + opcional y luego dígitos 
+              if (/^\+?\d*$/.test(value))
+              {
+                setForm({ ...form, telefono: value });
+              }
+            }}
             className="border p-2 rounded"
             required
           />
@@ -79,7 +87,14 @@ export default function ClienteFormModal({ open, onClose, onSubmit, initialData 
             name="documento"
             placeholder="Documento"
             value={form.documento}
-            onChange={handleChange}
+            onChange={(e) => {
+              const value = e.target.value;
+              // Acepta solo dígitos
+              if (/^\d*$/.test(value))
+              {
+                setForm({ ...form, documento: value });
+              }
+            }}
             className="border p-2 rounded"
             required
           />
